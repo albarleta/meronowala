@@ -14,26 +14,35 @@ function App() {
   const [status, setStatus] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleGetLocation = () => {
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const latitude = position.coords.latitude;
-          const longitude = position.coords.longitude;
+  const handleGetLocation = async () => {
+    setIsLoading(true);
+    try {
+      if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
 
-          setCoordinates({ lat: latitude, lon: longitude });
-        },
-        (error) => {
-          console.error(`Error getting location: ${error.message}`);
-        },
-        {
-          // enableHighAccuracy: true,
-          // timeout: 5000,
-          // maximumAge: 0,
-        }
-      );
-    } else {
-      console.error("Geolocation is not supported by this browser.");
+            setCoordinates({ lat: latitude, lon: longitude });
+            setIsLoading(false);
+          },
+          (error) => {
+            console.error(`Error getting location: ${error.message}`);
+            setIsLoading(false);
+          },
+          {
+            // enableHighAccuracy: true,
+            // timeout: 5000,
+            // maximumAge: 0,
+          }
+        );
+      } else {
+        console.error("Geolocation is not supported by this browser.");
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error(`Unexpected error: ${error.message}`);
+      setIsLoading(false);
     }
   };
 
